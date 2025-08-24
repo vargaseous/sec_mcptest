@@ -61,15 +61,21 @@ uv run mcp-server
 
 ## Integration with Claude Desktop
 
-Add to your Claude Desktop MCP config:
+**Generate Portable Config (Recommended):**
+```bash
+uv run python mcp_server.py --config
+```
 
+This will generate a portable configuration that automatically detects your project location and virtual environment. Copy the output to your `claude_desktop_config.json` file.
+
+**Manual Config (if needed):**
 ```json
 {
   "mcpServers": {
     "streamlit-controller": {
-      "command": "/Users/joshuavargas/Documents/GitHub/sec_mcptest/.venv/bin/python",
-      "args": ["/Users/joshuavargas/Documents/GitHub/sec_mcptest/mcp_server.py"],
-      "cwd": "/Users/joshuavargas/Documents/GitHub/sec_mcptest"
+      "command": "/path/to/your/project/.venv/bin/python", 
+      "args": ["/path/to/your/project/mcp_server.py"],
+      "cwd": "/path/to/your/project"
     }
   }
 }

@@ -8,6 +8,13 @@ import uvicorn
 app = FastAPI(title="Streamlit Health Facilities API")
 redis_client = redis.Redis(host='localhost', port=6379, db=0, decode_responses=True)
 
+def notify_state_change():
+    """Publish state change notification to Redis"""
+    try:
+        redis_client.publish("app_state_changes", "state_updated")
+    except redis.RedisError:
+        pass  # Don't fail API calls if pub/sub fails
+
 class AppState(BaseModel):
     selected_fclasses: List[str]
     map_center: Optional[List[float]] = None
@@ -32,8 +39,9 @@ async def get_state():
 async def set_state(state: AppState):
     """Set complete app state"""
     try:
-        redis_client.set("app_state", state.json())
-        return {"status": "success", "state": state.dict()}
+        redis_client.set("app_state", state.model_dump_json())
+        notify_state_change()
+        return {"status": "success", "state": state.model_dump()}
     except redis.RedisError:
         raise HTTPException(status_code=500, detail="Redis connection error")
 
@@ -44,6 +52,7 @@ async def set_filters(fclasses: List[str]):
         current_state = await get_state()
         current_state["selected_fclasses"] = fclasses
         redis_client.set("app_state", json.dumps(current_state))
+        notify_state_change()
         return {"status": "success", "selected_fclasses": fclasses}
     except redis.RedisError:
         raise HTTPException(status_code=500, detail="Redis connection error")
@@ -56,7 +65,8 @@ async def update_map(map_update: MapUpdate):
         current_state["map_center"] = map_update.center
         current_state["zoom_level"] = map_update.zoom
         redis_client.set("app_state", json.dumps(current_state))
-        return {"status": "success", "map": map_update.dict()}
+        notify_state_change()
+        return {"status": "success", "map": map_update.model_dump()}
     except redis.RedisError:
         raise HTTPException(status_code=500, detail="Redis connection error")
 
@@ -65,6 +75,7 @@ async def reset_state():
     """Reset app to default state"""
     try:
         redis_client.delete("app_state")
+        notify_state_change()
         return {"status": "success", "message": "State reset to defaults"}
     except redis.RedisError:
         raise HTTPException(status_code=500, detail="Redis connection error")

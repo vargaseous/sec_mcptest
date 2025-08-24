@@ -4,6 +4,9 @@ import geopandas as gpd
 from streamlit_folium import st_folium
 import requests
 import json
+import redis
+import threading
+import time
 
 def get_app_state():
     """Get current app state from API server"""
@@ -22,8 +25,40 @@ def update_app_state(state):
     except requests.exceptions.RequestException:
         pass
 
+@st.cache_resource
+def get_redis_subscriber():
+    """Get Redis subscriber for state change notifications"""
+    try:
+        redis_client = redis.Redis(host='localhost', port=6379, db=0, decode_responses=True)
+        pubsub = redis_client.pubsub()
+        pubsub.subscribe("app_state_changes")
+        return pubsub
+    except redis.RedisError:
+        return None
+
+def check_for_updates():
+    """Check for Redis pub/sub updates and trigger rerun if needed"""
+    if "last_update_check" not in st.session_state:
+        st.session_state.last_update_check = time.time()
+    
+    # Check for updates every 0.5 seconds
+    if time.time() - st.session_state.last_update_check > 0.5:
+        st.session_state.last_update_check = time.time()
+        
+        pubsub = get_redis_subscriber()
+        if pubsub:
+            try:
+                message = pubsub.get_message(timeout=0.01)  # Non-blocking check
+                if message and message['type'] == 'message':
+                    st.rerun()
+            except (redis.RedisError, TypeError):
+                pass
+
 def main():
     st.header("Singapore Health Facilities Explorer")
+    
+    # Check for real-time updates from Redis
+    check_for_updates()
     
     # Load GeoJSON data
     gdf = gpd.read_file("data/health_sg.geojson")

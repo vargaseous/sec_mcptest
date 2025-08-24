@@ -2,6 +2,7 @@
 
 import asyncio
 import json
+from pathlib import Path
 from typing import Any
 import httpx
 from mcp.server import Server
@@ -9,6 +10,10 @@ from mcp.server.models import InitializationOptions
 from mcp.types import ServerCapabilities
 import mcp.server.stdio
 import mcp.types as types
+
+# Auto-detect project root directory
+PROJECT_ROOT = Path(__file__).parent.absolute()
+VENV_PYTHON = PROJECT_ROOT / ".venv" / "bin" / "python"
 
 server = Server("streamlit-controller")
 
@@ -170,9 +175,35 @@ async def main():
             )
         )
 
+def generate_claude_config():
+    """Generate portable Claude Desktop config"""
+    config = {
+        "mcpServers": {
+            "streamlit-controller": {
+                "command": str(VENV_PYTHON),
+                "args": [str(PROJECT_ROOT / "mcp_server.py")],
+                "cwd": str(PROJECT_ROOT)
+            }
+        }
+    }
+    return json.dumps(config, indent=2)
+
 def main_sync():
     """Synchronous entry point for uv script"""
     asyncio.run(main())
 
+def print_config():
+    """Print the portable Claude Desktop config"""
+    print("=== Portable Claude Desktop Config ===")
+    print(generate_claude_config())
+    print("\n=== Instructions ===")
+    print(f"1. Copy the above config to your claude_desktop_config.json")
+    print(f"2. Project detected at: {PROJECT_ROOT}")
+    print(f"3. Virtual env at: {VENV_PYTHON}")
+
 if __name__ == "__main__":
-    main_sync()
+    import sys
+    if len(sys.argv) > 1 and sys.argv[1] == "--config":
+        print_config()
+    else:
+        main_sync()
