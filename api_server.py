@@ -67,6 +67,7 @@ async def reset_state():
         redis_client.delete("app_state")
         return {"status": "success", "message": "State reset to defaults"}
     except redis.RedisError:
+        raise HTTPException(status_code=500, detail="Redis connection error")
 
 @app.get("/health")
 async def health_check():
