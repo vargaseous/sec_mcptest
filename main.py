@@ -1,3 +1,4 @@
+import asyncio
 import streamlit as st
 import folium
 import geopandas as gpd
@@ -26,7 +27,7 @@ def update_app_state(state):
         pass
 
 @st.cache_resource
-def get_redis_subscriber():
+def get_redis_subscription():
     """Get Redis subscriber for state change notifications"""
     try:
         redis_client = redis.Redis(host='localhost', port=6379, db=0, decode_responses=True)
@@ -36,30 +37,27 @@ def get_redis_subscriber():
     except redis.RedisError:
         return None
 
-def check_for_updates():
+
+async def poll_for_updates():
     """Check for Redis pub/sub updates and trigger rerun if needed"""
-    if "last_update_check" not in st.session_state:
-        st.session_state.last_update_check = time.time()
-    
-    # Check for updates every 0.5 seconds
-    if time.time() - st.session_state.last_update_check > 0.5:
-        st.session_state.last_update_check = time.time()
-        
-        pubsub = get_redis_subscriber()
+    while True:
+        pubsub = get_redis_subscription()
+
         if pubsub:
             try:
                 message = pubsub.get_message(timeout=0.01)  # Non-blocking check
-                if message and message['type'] == 'message':
+                if message and message["type"] == "message":
+                    print("Triggering rerun!")
                     st.rerun()
-            except (redis.RedisError, TypeError):
-                pass
+            except (redis.RedisError, TypeError) as e:
+                st.write(f"Redis error: {e}")
+
+        await asyncio.sleep(1)
+
 
 def main():
     st.header("Singapore Health Facilities Explorer")
-    
-    # Check for real-time updates from Redis
-    check_for_updates()
-    
+
     # Load GeoJSON data
     gdf = gpd.read_file("data/health_sg.geojson")
     
@@ -138,5 +136,12 @@ def main():
             new_state["zoom_level"] = new_zoom
             update_app_state(new_state)
 
+    # Poll for updates in redis, this needs to be at the end of the streamlit code
+    asyncio.run(poll_for_updates())
+
+
 if __name__ == "__main__":
+    st.set_page_config(
+        page_title="Singapore Health Facilities Explorer", layout="wide", page_icon="🏥"
+    )
     main()
