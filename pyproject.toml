@@ -18,12 +18,14 @@ dependencies = [
     "mcp>=1.0.0",
     "httpx>=0.24.0",
     "requests>=2.31.0",
+    "fastmcp>=0.3.0",
 ]
 
 [project.scripts]
 api-server = "api_server:main"
 streamlit-app = "main:main"
 mcp-server = "mcp_server:main_sync"
+mcp-server-fast = "mcp_server_fastmcp:main"
 
 [tool.uv]
 dev-dependencies = []

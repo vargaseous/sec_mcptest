@@ -10,6 +10,7 @@ This repository was prepared as part of a demonstration on Model Context Protoco
 2. **FastAPI Server** (`api_server.py`) - REST API for state management
 3. **Redis** - Shared state storage and pub/sub
 4. **MCP Server** (`mcp_server.py`) - Tools for external clients (Claude Desktop / LM Studio)
+   - Alternative implementation: `mcp_server_fastmcp.py` (uses fastmcp)
 
 ## Installation
 
@@ -56,6 +57,11 @@ uv run streamlit run main.py
 4. (Optional) Test MCP server directly:
 ```bash
 uv run mcp-server
+```
+
+Alternative (fastmcp implementation):
+```bash
+uv run mcp-server-fast
 ```
 
 ## Available MCP Tools
