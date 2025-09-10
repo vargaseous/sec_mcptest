@@ -40,10 +40,32 @@ async def make_api_request(method: str, endpoint: str, data: dict = None) -> dic
 @server.list_tools()
 async def handle_list_tools() -> list[types.Tool]:
     """List available tools for Streamlit manipulation"""
+    # Try to fetch available fclasses to enrich schemas
+    allowed_fclasses: list[str] | None = None
+    try:
+        data = await make_api_request("GET", "/fclasses")
+        allowed_fclasses = data.get("fclasses") or None
+    except Exception:
+        allowed_fclasses = None
+
+    # Common schema for fclasses array, optionally with enum
+    fclasses_items_schema: dict = {"type": "string"}
+    if allowed_fclasses:
+        fclasses_items_schema["enum"] = allowed_fclasses
+
     return [
         types.Tool(
             name="get_app_state",
             description="Get the current state of the Streamlit app including selected filters and map view",
+            inputSchema={
+                "type": "object",
+                "properties": {},
+                "required": []
+            }
+        ),
+        types.Tool(
+            name="list_facility_classes",
+            description="List all available facility class names (fclasses) from the dataset",
             inputSchema={
                 "type": "object",
                 "properties": {},
@@ -58,7 +80,7 @@ async def handle_list_tools() -> list[types.Tool]:
                 "properties": {
                     "fclasses": {
                         "type": "array",
-                        "items": {"type": "string"},
+                        "items": fclasses_items_schema,
                         "description": "List of facility class names to display"
                     }
                 },
@@ -120,8 +142,33 @@ async def handle_call_tool(
             text=f"Current app state:\n{json.dumps(result, indent=2)}"
         )]
     
+    elif name == "list_facility_classes":
+        result = await make_api_request("GET", "/fclasses")
+        return [types.TextContent(
+            type="text",
+            text=f"Available fclasses:\n{json.dumps(result['fclasses'], indent=2)}"
+        )]
+    
     elif name == "set_facility_filters":
         fclasses = arguments.get("fclasses", [])
+        # Validate against known fclasses if available
+        try:
+            known = await make_api_request("GET", "/fclasses")
+            allowed = set(known.get("fclasses", []))
+            invalid = [x for x in fclasses if x not in allowed]
+            if invalid:
+                return [types.TextContent(
+                    type="text",
+                    text=(
+                        "Some fclasses are not recognized: "
+                        + ", ".join(invalid)
+                        + "\nUse list_facility_classes to see valid options."
+                    )
+                )]
+        except Exception:
+            # If validation fails (e.g., API down), proceed without it
+            pass
+
         result = await make_api_request("POST", "/filters", fclasses)
         return [types.TextContent(
             type="text", 

@@ -4,9 +4,11 @@ from typing import List, Optional
 import redis
 import json
 import uvicorn
+from pathlib import Path
 
 app = FastAPI(title="Streamlit Health Facilities API")
 redis_client = redis.Redis(host='localhost', port=6379, db=0, decode_responses=True)
+DATA_PATH = (Path(__file__).parent / "data" / "health_sg.geojson").resolve()
 
 def notify_state_change():
     """Publish state change notification to Redis"""
@@ -24,6 +26,29 @@ class MapUpdate(BaseModel):
     center: List[float]
     zoom: int
 
+def load_fclasses() -> List[str]:
+    """Load available fclass values from GeoJSON data file."""
+    try:
+        with open(DATA_PATH, "r", encoding="utf-8") as f:
+            gj = json.load(f)
+        values = []
+        for feat in gj.get("features", []):
+            props = feat.get("properties", {}) or {}
+            val = props.get("fclass")
+            if isinstance(val, str):
+                values.append(val)
+        # unique, stable order
+        seen = set()
+        uniq = []
+        for v in values:
+            if v not in seen:
+                seen.add(v)
+                uniq.append(v)
+        return uniq
+    except Exception as e:
+        # On failure, return empty list; endpoints will handle as error
+        return []
+
 @app.get("/state")
 async def get_state():
     """Get current app state"""
@@ -34,6 +59,14 @@ async def get_state():
         return {"selected_fclasses": [], "map_center": None, "zoom_level": 12}
     except redis.RedisError:
         raise HTTPException(status_code=500, detail="Redis connection error")
+
+@app.get("/fclasses")
+async def get_fclasses():
+    """Return the list of available facility classes from the dataset."""
+    fclasses = load_fclasses()
+    if not fclasses:
+        raise HTTPException(status_code=500, detail="Failed to load fclasses from data file")
+    return {"fclasses": fclasses}
 
 @app.post("/state")
 async def set_state(state: AppState):
