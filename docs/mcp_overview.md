@@ -47,7 +47,7 @@ Improvements in training, distillation, and quantisation (among others), as well
 Running local, on-device models has a number of key advantages:
 - You can ensure the privacy of user data, as you control how data is transferred between applications.
 - Your setup works without an internet connection.
-- While there remains significant environmental impact from training even open-source and open-weight models, you can significantly minimise the environmental impact of deploying AI by using lightweight AI models on-device rather than relying on sophisticated, very large models for simple tasks such as toggling features on/off.
+- While there remains significant environmental impact from training even open-source and open-weight models, you can significantly minimise the environmental impact of *deploying* AI by using lightweight AI models on-device rather than relying on sophisticated, very large models for simple tasks such as toggling features on/off.
 
 Running MCP tools with a local model in LM Studio can be a great experience: your prompts, tool calls, and data stay on your machine; there are no per‑token API fees; and responses arrive without cloud round‑trips. This makes local models ideal for iterative development, sensitive data, prototyping in low‑connectivity environments, or simply experimenting with different model families at your own pace. The trade‑off is that quality and speed depend on your hardware and the model you choose: smaller models are fast and private but may need more guidance, while larger ones are more capable but heavier on memory and compute. LM Studio makes it easy to try several options and pick the right balance for your workflow.
 
