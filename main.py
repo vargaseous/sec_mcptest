@@ -43,6 +43,7 @@ def get_redis_subscription():
 
 async def poll_for_updates():
     """Check for Redis pub/sub updates and trigger rerun if needed"""
+    last_forced = time.time()
     while True:
         pubsub = get_redis_subscription()
 
@@ -54,6 +55,14 @@ async def poll_for_updates():
                     st.rerun()
             except (redis.RedisError, TypeError) as e:
                 st.write(f"Redis error: {e}")
+
+        # Force a periodic refresh every 5 seconds as a safety net
+        now = time.time()
+        if now - last_forced >= 5:
+            print("Triggering periodic rerun (5s interval)")
+            st.rerun()
+            # After rerun is called, execution restarts; this assignment is for completeness
+            last_forced = now
 
         await asyncio.sleep(1)
 

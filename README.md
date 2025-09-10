@@ -1,13 +1,15 @@
 # Demonstration of a Streamlit app and MCP server
 
-This setup allows external applications (Claude Desktop, ChatGPT Desktop, and LM Studio) to control a Streamlit dashboard (an explorer of Singapore health facilities data from OpenStreetMap) through an MCP server.
+This setup allows external applications (mainly desktop LLM clients with MCP support, such as Claude Desktop and LM Studio) to control a Streamlit dashboard (an explorer of Singapore health facilities data from OpenStreetMap) through an MCP server.
+
+This repository was prepared as part of a demonstration on Model Context Protocol (MCP) and agentic coding assistants (such as Claude Code and OpenAI Codex) for National Coding Week at the Singapore-ETH Centre.
 
 ## Architecture
 
 1. **Streamlit App** (`main.py`) - The web interface
 2. **FastAPI Server** (`api_server.py`) - REST API for state management
 3. **Redis** - Shared state storage and pub/sub
-4. **MCP Server** (`mcp_server.py`) - Tools for external agents (Claude/ChatGPT/LM Studio)
+4. **MCP Server** (`mcp_server.py`) - Tools for external clients (Claude Desktop / LM Studio)
 
 ## Installation
 
@@ -88,7 +90,7 @@ uv run python mcp_server.py --config
 
 Copy the printed JSON into your Claude Desktop config file. Typical locations:
 - macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
-- Windows: `%APPDATA%/Claude/claude_desktop_config.json`
+- Windows: `%APPDATA%\Claude\claude_desktop_config.json`
 - Linux: `~/.config/Claude/claude_desktop_config.json`
 
 2) Manual config (if you prefer editing by hand):
@@ -124,7 +126,7 @@ ChatGPT Desktop does not currently support adding custom MCP servers. Use Claude
 
 ---
 
-## Integration: LM Studio (0.3.25)
+## Integration: LM Studio (tested on 0.3.25)
 
 Follow these steps to register the MCP server:
 
@@ -153,6 +155,16 @@ Troubleshooting (LM Studio 0.3.25):
 - Verify paths in `mcp.json` are absolute and the `.venv` has dependencies (`uv sync`).
 - Check the API health at `http://localhost:8000/health` and confirm Redis is connected.
 
+Examples of models tested and reported to work:
+- google/gemma-3-12b
+- qwen/qwen3-1.7b
+- qwen/qwen3-4b-2507
+- qwen/qwen3-4b-thinking-2507
+
+🍎 On a MacBook Pro 14-inch with M2 Pro:
+- Qwen3-4B-2507 balanced performance and instruction-following.
+- However, even Qwen3-1.7B sufficed for most use cases, and runs comfortably alongside other apps.
+
 ---
 
 ## Usage Examples
@@ -177,6 +189,6 @@ Once connected from any MCP client:
 
 ## Credits
 
-This repository was created with extensive input from Claude Code and ChatGPT.
+This repository was created with extensive input from Claude Code and OpenAI Codex.
 
 Data/Maps Copyright 2018 Geofabrik GmbH and OpenStreetMap Contributors
