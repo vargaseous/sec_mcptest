@@ -12,6 +12,11 @@ This repository was prepared as part of a demonstration on Model Context Protoco
 4. **MCP Server** (`mcp_server.py`) - Tools for external clients (Claude Desktop / LM Studio)
    - Alternative implementation: `mcp_server_fastmcp.py` (uses fastmcp)
 
+## Docs
+
+- MCP overview: `docs/mcp_overview.md`
+- FastMCP how-to: `docs/fastmcp_guide.md`
+
 ## Installation
 
 1. Install dependencies:

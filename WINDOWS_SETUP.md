@@ -2,6 +2,8 @@
 
 This guide walks through running the Streamlit app, FastAPI server, Redis, and configuring MCP clients on Windows.
 
+*This will be integrated into the main README.md document after proper testing.*
+
 ## Prerequisites
 
 - Install uv (PowerShell):
