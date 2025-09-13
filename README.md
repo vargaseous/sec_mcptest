@@ -295,3 +295,5 @@ Once connected from any MCP client:
 This repository was created with extensive input from Claude Code and OpenAI Codex.
 
 Data/Maps Copyright 2018 Geofabrik GmbH and OpenStreetMap Contributors
+
+*Last updated: September 2025*

@@ -64,3 +64,5 @@ Running MCP tools with a local model in LM Studio can be a great experience: you
 - FastMCP how‑to: `docs/fastmcp_guide.md`
 - FastMCP server reference: `mcp_server_fastmcp.py`
 - API and app: `api_server.py`, `main.py`
+
+*Last updated: September 2025*

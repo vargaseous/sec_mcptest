@@ -197,3 +197,5 @@ Tip from this repo: `mcp_server_fastmcp.py` detects the venv Python on Windows v
 - Portable client config: `mcp_server_fastmcp.py:108–113`
 
 With these patterns, you can point FastMCP at any domain: local scripts, REST or GraphQL APIs, CLIs, or databases — and present clean, typed tools to your MCP client.
+
+*Last updated: September 2025*
