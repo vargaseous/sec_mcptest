@@ -17,16 +17,19 @@ This repository was prepared as part of a demonstration on Model Context Protoco
 - MCP overview: `docs/mcp_overview.md`
 - FastMCP how-to: `docs/fastmcp_guide.md`
 
-## Installation
+## Usage Guide (macOS/Linux)
+
+### Installation
 
 1. Install dependencies:
+Make sure you already have Python and uv installed. Then, use uv to download and install the project dependencies.
 ```bash
 uv sync
 ```
 
 2. Install and start Redis:
 ```bash
-# macOS
+# macOS (Homebrew)
 brew install redis
 brew services start redis
 
@@ -35,7 +38,7 @@ sudo apt install redis-server
 sudo systemctl start redis-server
 ```
 
-## Running the System
+### Running the System
 
 Start each component in its own terminal (order doesn’t matter, but all three should be running before using MCP tools):
 
@@ -68,6 +71,52 @@ Alternative (fastmcp implementation):
 ```bash
 uv run mcp-server-fast
 ```
+
+## Installation (Windows)
+
+### Install dependencies
+If you are running a Windows machine, you may need additional steps to install the prerequisites. Instead of specific instructions, we will provide a list of links that provide you different ways to install the prerequisites, as well as recommendations for what to do if you are not sure.
+
+| Prerequisite | Recommendation |
+|--------------|----------------|
+| [Git for Windows](https://git-scm.com/downloads/win) | Download and install using the official installer from the Git for Windows website. |
+| [uv](https://docs.astral.sh/uv/getting-started/installation/) | Follow the installation instructions provided on the uv documentation page. |
+| [Redis](https://redis.io/) | Redis is not natively available for Windows. Use Docker to run Redis: download the [Docker image for Redis](https://hub.docker.com/_/redis), then follow the [Docker usage guide](https://redis.io/docs/latest/operate/oss_and_stack/install/install-stack/docker/) on the Redis website. |
+| [Docker](https://www.docker.com/) | To run Redis, you may want to download Docker. [Docker Desktop](https://docs.docker.com/desktop/setup/install/windows-install/) is the easiest way to use Docker on Windows. |
+
+Optional:
+- [GitHub Desktop](https://desktop.github.com/download/): This makes it easier to manage and synchronise GitHub repositories like this one to your computer.
+
+Then, open Command Prompt in the project directory (`GitHub/sec_mcptest/`), and run:
+```shell
+uv sync
+```
+
+### Running the system
+
+1. Start Docker Engine
+If you are using Docker Desktop, open the app and log into Docker.
+
+2. Start Redis
+Open the Command Prompt.
+
+If you have not yet installed Redis, do so:
+```shell
+docker pull redis
+```
+
+Then, start redis (complete instructions [here](https://redis.io/docs/latest/operate/oss_and_stack/install/install-stack/docker/))
+```shell
+docker run -d --name redis -p 6379:6379 redis:
+```
+
+⚠️ IMPORTANT: Keep this Command Prompt tab open.
+
+3. Start API server
+Before proceeding with this step, make sure you have already run `uv sync` on the project directory.
+
+Open a new instsance of Command Prompt (not closing the previous one) in the project directory (`GitHub/sec_mcptest/`). 
+
 
 ## Available MCP Tools
 
