@@ -74,7 +74,7 @@ uv run mcp-server-fast
 
 ## Installation (Windows)
 
-### Install dependencies
+#### Install dependencies
 If you are running a Windows machine, you may need additional steps to install the prerequisites. Instead of specific instructions, we will provide a list of links that provide you different ways to install the prerequisites, as well as recommendations for what to do if you are not sure.
 
 | Prerequisite | Recommendation |
@@ -87,18 +87,18 @@ If you are running a Windows machine, you may need additional steps to install t
 Optional:
 - [GitHub Desktop](https://desktop.github.com/download/): This makes it easier to manage and synchronise GitHub repositories like this one to your computer.
 
-Then, open Command Prompt in the project directory (`GitHub/sec_mcptest/`), and run:
+Then, open PowerShell (Windows Terminal) in the project directory (e.g. `...\GitHub\sec_mcptest\` if you are using GitHub Desktop to clone this repository), and run:
 ```shell
 uv sync
 ```
 
-### Running the system
+#### Running the system
 
 1. Start Docker Engine
 If you are using Docker Desktop, open the app and log into Docker.
 
 2. Start Redis
-Open the Command Prompt.
+Open the PowerShell (Windows Terminal).
 
 If you have not yet installed Redis, do so:
 ```shell
@@ -107,23 +107,40 @@ docker pull redis
 
 Then, start redis (complete instructions [here](https://redis.io/docs/latest/operate/oss_and_stack/install/install-stack/docker/))
 ```shell
-docker run -d --name redis -p 6379:6379 redis:
+docker run -d --name redis -p 6379:6379 redis:latest
 ```
 
-⚠️ IMPORTANT: Keep this Command Prompt tab open.
+⚠️ IMPORTANT: Leave this PowerShell (Windows Terminal) tab running. It keeps Redis alive.
 
 3. Start API server
 Before proceeding with this step, make sure you have already run `uv sync` on the project directory.
 
-Open a new instsance of Command Prompt (not closing the previous one) in the project directory (`GitHub/sec_mcptest/`). 
+Open *new* instances of PowerShell (Windows Terminal) in the project directory (`GitHub/sec_mcptest/`). Then start the following services:
 
+- API server:
+  - `uv run api-server`
+  - or `.venv\Scripts\python.exe api_server.py`
+- Streamlit app:
+  - `uv run streamlit run main.py`
+  - or `uv run python -m streamlit run main.py`
+  - or `.venv\Scripts\streamlit.exe run main.py`
+- MCP server (optional for testing):
+  - `uv run mcp-server`
+
+Everything should now be running. See below for information on how to set up your client of choice.
+
+### WSL2 Option
+
+- Install Ubuntu via Microsoft Store and run all commands inside WSL2.
+- Follow the Linux instructions (e.g., `sudo apt install redis-server`).
+- Access services from Windows at `http://localhost:8501` (Streamlit) and `http://localhost:8000` (API).
 
 ## Available MCP Tools
 
 - `get_app_state` — Get current filters and map view
 - `list_facility_classes` — List valid `fclass` values from the dataset
 - `set_facility_filters` — Control visible facility types
-- `set_map_view` — Set map center and zoom level
+- `set_map_view` - Set map centre and zoom level
 - `reset_app` — Reset to default state
 - `check_health` — Verify API↔Redis connectivity
 
@@ -131,11 +148,6 @@ Open a new instsance of Command Prompt (not closing the previous one) in the pro
 
 - Python environment set up with `uv sync` and the virtual env located at `.venv/` (created by `uv`).
 - Redis, FastAPI server, and Streamlit app running locally as shown above.
-- Verify API health before connecting a client:
-```bash
-curl http://localhost:8000/health
-# Expect: {"status":"healthy","redis":"connected"}
-```
 
 ---
 
@@ -154,6 +166,8 @@ Copy the printed JSON into your Claude Desktop config file. Typical locations:
 - Linux: `~/.config/Claude/claude_desktop_config.json`
 
 2) Manual config (if you prefer editing by hand):
+
+#### macOS/Linux
 ```json
 {
   "mcpServers": {
@@ -166,23 +180,30 @@ Copy the printed JSON into your Claude Desktop config file. Typical locations:
 }
 ```
 
+#### Windows
+```json
+{
+  "mcpServers": {
+    "streamlit-controller": {
+      "command": "/absolute/path/to/project/.venv/Scripts/python.exe",
+      "args": ["/absolute/path/to/project/mcp_server.py"],
+      "cwd": "/absolute/path/to/project"
+    }
+  }
+}
+```
+
 3) Use it in Claude:
 - Ensure Redis, API, and Streamlit are running.
 - Open Claude Desktop and start a new chat.
 - Ask Claude to use the `streamlit-controller` tools, e.g.:
   - "Use get_app_state"
-  - "Set the map center to 1.3521, 103.8198 with zoom 13"
+- "Set the map centre to 1.3521, 103.8198 with zoom 13"
 
 Troubleshooting (Claude):
 - If tools are not listed, recheck the `command`, `args`, and `cwd` paths.
 - Ensure `uv run api-server` is running and `curl http://localhost:8000/health` returns healthy.
 - If Redis isn’t running, the API health will show `"redis":"disconnected"`.
-
----
-
-## Integration: ChatGPT Desktop
-
-ChatGPT Desktop does not currently support adding custom MCP servers. Use Claude Desktop or LM Studio instead.
 
 ---
 
@@ -195,12 +216,27 @@ Follow these steps to register the MCP server:
 - Click Install (to enable the MCP integration if prompted).
 - Click Edit mcp.json.
 
-2) Add the server to `mcp.json` (example):
+2) Add the server to `mcp.json`.
+
+#### macOS/Linux
 ```json
 {
   "mcpServers": {
     "streamlit-controller": {
       "command": "/absolute/path/to/project/.venv/bin/python",
+      "args": ["/absolute/path/to/project/mcp_server.py"],
+      "cwd": "/absolute/path/to/project"
+    }
+  }
+}
+```
+
+#### Windows
+```json
+{
+  "mcpServers": {
+    "streamlit-controller": {
+      "command": "/absolute/path/to/project/.venv/Scripts/python.exe",
       "args": ["/absolute/path/to/project/mcp_server.py"],
       "cwd": "/absolute/path/to/project"
     }
@@ -216,12 +252,18 @@ Troubleshooting (LM Studio 0.3.25):
 - Check the API health at `http://localhost:8000/health` and confirm Redis is connected.
 
 Examples of models tested and reported to work:
-- google/gemma-3-12b
-- qwen/qwen3-1.7b
-- qwen/qwen3-4b-2507
-- qwen/qwen3-4b-thinking-2507
+- `google/gemma-3-12b`
+- `openai/gpt-oss-20b`
+- `qwen/qwen3-1.7b`
+- `qwen/qwen3-4b-2507`
+- `qwen/qwen3-4b-thinking-2507`
 
-🍎 On a MacBook Pro 14-inch with M2 Pro:
+
+We have tested these on the following devices:
+- 🍎 MacBook Pro 14-inch (2023), M2 Pro (10-core), 16 GB RAM
+- 🪟 ThinkPad P14s (Gen 5), Intel Core Ultra 7 155H + NVIDIA RTX 500 Ada, 32 GB RAM
+
+Both machines performed similarly, and we found:
 - Qwen3-4B-2507 balanced performance and instruction-following.
 - However, even Qwen3-1.7B sufficed for most use cases, and runs comfortably alongside other apps.
 
@@ -233,7 +275,7 @@ Once connected from any MCP client:
 - "Show only hospitals on the map"
 - "Zoom in on the central area"
 - "Reset the app to show all facilities"
-- "Center the map on coordinates 1.3521, 103.8198"
+- "Centre the map on coordinates 1.3521, 103.8198"
 
 ## Troubleshooting (General)
 
