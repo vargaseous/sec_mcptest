@@ -253,6 +253,7 @@ Troubleshooting (LM Studio 0.3.25):
 
 Examples of models tested and reported to work:
 - `google/gemma-3-12b`
+- `mistralai/devstral-small-2507`
 - `openai/gpt-oss-20b`
 - `qwen/qwen3-1.7b`
 - `qwen/qwen3-4b-2507`
