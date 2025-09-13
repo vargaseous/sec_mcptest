@@ -17,7 +17,7 @@ This repository was prepared as part of a demonstration on Model Context Protoco
 - MCP overview: `docs/mcp_overview.md`
 - FastMCP how-to: `docs/fastmcp_guide.md`
 
-## Usage Guide (macOS/Linux)
+## Setup Guide (macOS/Linux)
 
 ### Installation
 
@@ -72,9 +72,9 @@ Alternative (fastmcp implementation):
 uv run mcp-server-fast
 ```
 
-## Installation (Windows)
+## Setup Guide (Windows)
 
-#### Install dependencies
+#### Installation
 If you are running a Windows machine, you may need additional steps to install the prerequisites. Instead of specific instructions, we will provide a list of links that provide you different ways to install the prerequisites, as well as recommendations for what to do if you are not sure.
 
 | Prerequisite | Recommendation |
