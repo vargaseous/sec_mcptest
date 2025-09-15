@@ -22,7 +22,7 @@ import httpx
 from fastmcp import FastMCP
 
 API_BASE_URL = "http://localhost:8000"
-app = FastMCP("streamlit-controller")
+app = FastMCP("singapore-health-facilities-explorer")
 
 async def _api_request(method: str, endpoint: str, data: Any | None = None) -> Dict[str, Any]:
     async with httpx.AsyncClient(timeout=5) as client:
@@ -44,7 +44,7 @@ if __name__ == "__main__":
 ## Core Concepts
 
 - Server name
-  - A short identifier you choose when creating `FastMCP(...)`. Example in this repo: `mcp_server_fastmcp.py:23` uses `"streamlit-controller"`.
+  - A short identifier you choose when creating `FastMCP(...)`. Example in this repo: `mcp_server_fastmcp.py:23` uses `"singapore-health-facilities-explorer"`.
 
 - Tools via decorators
   - Any function (sync or async) with `@app.tool()` becomes a tool. See examples at `mcp_server_fastmcp.py:41, 47, 54, 73, 81, 88`.
@@ -162,7 +162,7 @@ Example (Claude Desktop style, matching this project):
 ```json
 {
   "mcpServers": {
-    "streamlit-controller": {
+    "singapore-health-facilities-explorer": {
       "command": "/absolute/path/to/project/.venv/bin/python",
       "args": ["/absolute/path/to/project/mcp_server_fastmcp.py"],
       "cwd": "/absolute/path/to/project"

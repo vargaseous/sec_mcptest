@@ -20,7 +20,7 @@ VENV_PYTHON = PROJECT_ROOT / ".venv" / "Scripts" / "python.exe" if (PROJECT_ROOT
 
 API_BASE_URL = "http://localhost:8000"
 
-app = FastMCP("streamlit-controller")
+app = FastMCP("singapore-health-facilities-explorer")
 
 
 async def _api_request(method: str, endpoint: str, data: Any | None = None) -> Dict[str, Any]:
@@ -95,7 +95,7 @@ def generate_claude_config() -> str:
     """Generate a portable Claude Desktop config for this server."""
     config = {
         "mcpServers": {
-            "streamlit-controller": {
+            "singapore-health-facilities-explorer": {
                 "command": str(VENV_PYTHON),
                 "args": [str(PROJECT_ROOT / "mcp_server_fastmcp.py")],
                 "cwd": str(PROJECT_ROOT),

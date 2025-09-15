@@ -171,7 +171,7 @@ Copy the printed JSON into your Claude Desktop config file. Typical locations:
 ```json
 {
   "mcpServers": {
-    "streamlit-controller": {
+    "singapore-health-facilities-explorer": {
       "command": "/absolute/path/to/project/.venv/bin/python",
       "args": ["/absolute/path/to/project/mcp_server.py"],
       "cwd": "/absolute/path/to/project"
@@ -184,7 +184,7 @@ Copy the printed JSON into your Claude Desktop config file. Typical locations:
 ```json
 {
   "mcpServers": {
-    "streamlit-controller": {
+    "singapore-health-facilities-explorer": {
       "command": "/absolute/path/to/project/.venv/Scripts/python.exe",
       "args": ["/absolute/path/to/project/mcp_server.py"],
       "cwd": "/absolute/path/to/project"
@@ -196,7 +196,7 @@ Copy the printed JSON into your Claude Desktop config file. Typical locations:
 3) Use it in Claude:
 - Ensure Redis, API, and Streamlit are running.
 - Open Claude Desktop and start a new chat.
-- Ask Claude to use the `streamlit-controller` tools, e.g.:
+- Ask Claude to use the `singapore-health-facilities-explorer` tools, e.g.:
   - "Use get_app_state"
 - "Set the map centre to 1.3521, 103.8198 with zoom 13"
 
@@ -222,7 +222,7 @@ Follow these steps to register the MCP server:
 ```json
 {
   "mcpServers": {
-    "streamlit-controller": {
+    "singapore-health-facilities-explorer": {
       "command": "/absolute/path/to/project/.venv/bin/python",
       "args": ["/absolute/path/to/project/mcp_server.py"],
       "cwd": "/absolute/path/to/project"
@@ -235,7 +235,7 @@ Follow these steps to register the MCP server:
 ```json
 {
   "mcpServers": {
-    "streamlit-controller": {
+    "singapore-health-facilities-explorer": {
       "command": "/absolute/path/to/project/.venv/Scripts/python.exe",
       "args": ["/absolute/path/to/project/mcp_server.py"],
       "cwd": "/absolute/path/to/project"

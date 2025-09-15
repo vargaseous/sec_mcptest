@@ -15,7 +15,7 @@ import mcp.types as types
 PROJECT_ROOT = Path(__file__).parent.absolute()
 VENV_PYTHON = PROJECT_ROOT / ".venv" / "bin" / "python"
 
-server = Server("streamlit-controller")
+server = Server("singapore-health-facilities-explorer")
 
 API_BASE_URL = "http://localhost:8000"
 
@@ -214,7 +214,7 @@ async def main():
             read_stream,
             write_stream,
             InitializationOptions(
-                server_name="streamlit-controller",
+                server_name="singapore-health-facilities-explorer",
                 server_version="0.1.0",
                 capabilities=ServerCapabilities(
                     tools={},
@@ -226,7 +226,7 @@ def generate_claude_config():
     """Generate portable Claude Desktop config"""
     config = {
         "mcpServers": {
-            "streamlit-controller": {
+            "singapore-health-facilities-explorer": {
                 "command": str(VENV_PYTHON),
                 "args": [str(PROJECT_ROOT / "mcp_server.py")],
                 "cwd": str(PROJECT_ROOT)
